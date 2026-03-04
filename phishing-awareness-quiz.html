@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Phishing Awareness Quiz | TOBOLA</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #0f2142;
+    --red: #c0392b;
+    --red-light: #e74c3c;
+    --orange: #d35400;
+    --amber: #f39c12;
+    --sky: #fde8e8;
+    --green: #059669;
+    --wrong: #dc2626;
+    --white: #ffffff;
+    --light: #f8fafc;
+    --muted: #64748b;
+    --border: #e2e8f0;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--light);
+    min-height: 100vh;
+    color: var(--navy);
+  }
+
+  .header {
+    background: var(--navy);
+    padding: 20px 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .header-brand {
+    font-family: 'DM Serif Display', serif;
+    color: var(--white);
+    font-size: 1.4rem;
+    letter-spacing: 0.04em;
+  }
+  .header-sub {
+    color: #94a3b8;
+    font-size: 0.8rem;
+    font-weight: 300;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-top: 2px;
+  }
+  .header-badge {
+    background: rgba(192,57,43,0.3);
+    border: 1px solid rgba(231,76,60,0.4);
+    color: #fca5a5;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 0.78rem;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+  }
+
+  .hero {
+    background: linear-gradient(135deg, #1a0a0a 0%, #2d1515 50%, #1e1628 100%);
+    padding: 60px 40px 50px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -60px; right: -60px;
+    width: 300px; height: 300px;
+    border-radius: 50%;
+    background: rgba(192,57,43,0.12);
+  }
+  .hero::after {
+    content: '';
+    position: absolute;
+    bottom: -80px; left: -40px;
+    width: 250px; height: 250px;
+    border-radius: 50%;
+    background: rgba(243,156,18,0.06);
+  }
+  .hero-icon {
+    width: 64px; height: 64px;
+    background: var(--red);
+    border-radius: 18px;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 24px;
+    font-size: 28px;
+    box-shadow: 0 8px 24px rgba(192,57,43,0.5);
+    position: relative; z-index: 1;
+  }
+  .hero h1 {
+    font-family: 'DM Serif Display', serif;
+    color: var(--white);
+    font-size: 2.2rem;
+    margin-bottom: 12px;
+    position: relative; z-index: 1;
+  }
+  .hero p {
+    color: #94a3b8;
+    font-size: 1rem;
+    font-weight: 300;
+    max-width: 500px;
+    margin: 0 auto;
+    line-height: 1.6;
+    position: relative; z-index: 1;
+  }
+  .hero-stats {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    margin-top: 32px;
+    position: relative; z-index: 1;
+  }
+  .stat { text-align: center; }
+  .stat-num {
+    font-family: 'DM Serif Display', serif;
+    color: #f87171;
+    font-size: 1.8rem;
+  }
+  .stat-label {
+    color: #94a3b8;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-top: 2px;
+  }
+
+  /* Alert banner */
+  .alert-banner {
+    background: linear-gradient(90deg, #7f1d1d, #991b1b);
+    padding: 10px 40px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.82rem;
+    color: #fecaca;
+    border-bottom: 1px solid #b91c1c;
+  }
+  .alert-banner strong { color: white; }
+
+  .progress-wrap {
+    background: white;
+    border-bottom: 1px solid var(--border);
+    padding: 16px 40px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  }
+  .progress-label {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--navy);
+    white-space: nowrap;
+    min-width: 100px;
+  }
+  .progress-bar-track {
+    flex: 1;
+    height: 8px;
+    background: var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--red), #f87171);
+    border-radius: 4px;
+    transition: width 0.5s cubic-bezier(.4,0,.2,1);
+    width: 0%;
+  }
+  .progress-count {
+    font-size: 0.82rem;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+
+  .quiz-container {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 40px 24px 80px;
+  }
+
+  .question-card {
+    background: white;
+    border-radius: 16px;
+    border: 1px solid var(--border);
+    padding: 36px;
+    margin-bottom: 24px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+    animation: fadeUp 0.4s ease both;
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .question-number {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: #fef2f2;
+    color: var(--red);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 5px 12px;
+    border-radius: 20px;
+    margin-bottom: 16px;
+  }
+  .question-text {
+    font-size: 1.05rem;
+    font-weight: 500;
+    line-height: 1.55;
+    color: var(--navy);
+    margin-bottom: 24px;
+  }
+
+  /* Fake email display */
+  .email-example {
+    background: #f8fafc;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px 20px;
+    margin-bottom: 20px;
+    font-size: 0.88rem;
+    font-family: monospace;
+    line-height: 1.8;
+  }
+  .email-example .label {
+    color: var(--muted);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.78rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 8px;
+  }
+  .email-example .field { display: flex; gap: 8px; }
+  .email-example .field-name { color: var(--muted); min-width: 60px; }
+  .email-example .field-val { color: var(--navy); }
+  .email-example .field-val.sus { color: var(--red); font-weight: 600; }
+
+  .options {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .option {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 18px;
+    border: 2px solid var(--border);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    background: white;
+    text-align: left;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.95rem;
+    color: var(--navy);
+  }
+  .option:hover:not(:disabled) {
+    border-color: var(--red-light);
+    background: #fff5f5;
+    transform: translateX(3px);
+  }
+  .option-letter {
+    width: 28px; height: 28px;
+    border-radius: 7px;
+    background: var(--light);
+    border: 1.5px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.78rem;
+    font-weight: 700;
+    flex-shrink: 0;
+    transition: all 0.18s;
+    color: var(--muted);
+  }
+  .option.correct { border-color: var(--green); background: #ecfdf5; }
+  .option.correct .option-letter { background: var(--green); border-color: var(--green); color: white; }
+  .option.incorrect { border-color: var(--wrong); background: #fef2f2; }
+  .option.incorrect .option-letter { background: var(--wrong); border-color: var(--wrong); color: white; }
+  .option:disabled { cursor: default; }
+
+  .feedback {
+    margin-top: 16px;
+    padding: 14px 18px;
+    border-radius: 10px;
+    font-size: 0.88rem;
+    line-height: 1.5;
+    display: none;
+    animation: fadeUp 0.3s ease;
+  }
+  .feedback.show { display: flex; gap: 10px; align-items: flex-start; }
+  .feedback.correct-fb { background: #ecfdf5; border: 1px solid #6ee7b7; color: #065f46; }
+  .feedback.incorrect-fb { background: #fef2f2; border: 1px solid #fca5a5; color: #991b1b; }
+  .feedback-icon { font-size: 1rem; flex-shrink: 0; margin-top: 1px; }
+
+  .next-btn {
+    display: none;
+    margin-top: 20px;
+    background: var(--navy);
+    color: white;
+    border: none;
+    padding: 12px 28px;
+    border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 0.02em;
+  }
+  .next-btn:hover { background: var(--red); transform: translateY(-1px); }
+  .next-btn.show { display: inline-flex; align-items: center; gap: 8px; }
+
+  #results { display: none; animation: fadeUp 0.5s ease; }
+  .results-card {
+    background: white;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    padding: 48px 40px;
+    text-align: center;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.06);
+  }
+  .score-ring {
+    width: 140px; height: 140px;
+    border-radius: 50%;
+    margin: 0 auto 28px;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    position: relative;
+  }
+  .score-ring svg { position: absolute; top: 0; left: 0; transform: rotate(-90deg); }
+  .score-ring circle { fill: none; stroke-width: 8; stroke-linecap: round; }
+  .score-bg { stroke: var(--border); }
+  .score-fill { stroke: var(--red); transition: stroke-dashoffset 1s ease; }
+  .score-number {
+    font-family: 'DM Serif Display', serif;
+    font-size: 2.4rem;
+    color: var(--navy);
+    position: relative; z-index: 1;
+    line-height: 1;
+  }
+  .score-label {
+    font-size: 0.72rem; color: var(--muted);
+    letter-spacing: 0.08em; text-transform: uppercase;
+    position: relative; z-index: 1;
+  }
+  .results-title { font-family: 'DM Serif Display', serif; font-size: 1.8rem; color: var(--navy); margin-bottom: 10px; }
+  .results-sub { color: var(--muted); font-size: 0.95rem; line-height: 1.6; max-width: 440px; margin: 0 auto 32px; }
+  .results-breakdown {
+    display: flex; justify-content: center; gap: 32px; margin-bottom: 36px;
+    padding-top: 24px; border-top: 1px solid var(--border);
+  }
+  .breakdown-item { text-align: center; }
+  .breakdown-num { font-family: 'DM Serif Display', serif; font-size: 1.6rem; }
+  .breakdown-num.good { color: var(--green); }
+  .breakdown-num.bad  { color: var(--wrong); }
+  .retry-btn {
+    background: var(--navy); color: white; border: none;
+    padding: 14px 36px; border-radius: 10px;
+    font-family: 'DM Sans', sans-serif; font-size: 0.95rem; font-weight: 600;
+    cursor: pointer; transition: all 0.2s; letter-spacing: 0.02em;
+  }
+  .retry-btn:hover { background: var(--red); transform: translateY(-2px); box-shadow: 0 6px 20px rgba(192,57,43,0.3); }
+
+  .section-label {
+    font-size: 0.72rem; font-weight: 700; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--muted);
+    padding: 8px 0 16px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .section-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+  @media (max-width: 600px) {
+    .header { padding: 16px 20px; }
+    .hero { padding: 40px 20px; }
+    .hero h1 { font-size: 1.7rem; }
+    .hero-stats { gap: 24px; }
+    .quiz-container { padding: 24px 16px 60px; }
+    .question-card { padding: 24px 20px; }
+    .progress-wrap { padding: 12px 20px; }
+    .results-card { padding: 36px 24px; }
+    .alert-banner { padding: 10px 20px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <div class="header-brand">TOBOLA</div>
+    <div class="header-sub">Employee Training</div>
+  </div>
+  <div class="header-badge">🎣 Phishing Awareness</div>
+</div>
+
+<div class="hero">
+  <div class="hero-icon">🎣</div>
+  <h1>Phishing Awareness Quiz</h1>
+  <p>Test your ability to recognize and respond to phishing threats. Protecting TOBOLA starts with you — one click is all it takes.</p>
+  <div class="hero-stats">
+    <div class="stat">
+      <div class="stat-num">91%</div>
+      <div class="stat-label">of attacks start with email</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">12</div>
+      <div class="stat-label">Questions</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">80%</div>
+      <div class="stat-label">To Pass</div>
+    </div>
+  </div>
+</div>
+
+<div class="alert-banner">
+  <span>⚠️</span>
+  <span><strong>Security Training Required.</strong> Complete this quiz after reviewing the Phishing Awareness Training presentation. Report suspicious emails to <strong><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="224b5662564d404d4e430c414d4f">[email&#160;protected]</a></strong></span>
+</div>
+
+<div class="progress-wrap">
+  <div class="progress-label" id="progressLabel">Question 1 of 12</div>
+  <div class="progress-bar-track">
+    <div class="progress-bar-fill" id="progressBar"></div>
+  </div>
+  <div class="progress-count" id="progressCount">0 answered</div>
+</div>
+
+<div class="quiz-container">
+  <div id="quizArea"></div>
+  <div id="results">
+    <div class="results-card">
+      <div class="score-ring" id="scoreRing">
+        <svg width="140" height="140" viewBox="0 0 140 140">
+          <circle class="score-bg" cx="70" cy="70" r="58"/>
+          <circle class="score-fill" id="scoreCircle" cx="70" cy="70" r="58"
+            stroke-dasharray="364.4" stroke-dashoffset="364.4"/>
+        </svg>
+        <div class="score-number" id="scoreNumber">0%</div>
+        <div class="score-label">Score</div>
+      </div>
+      <div class="results-title" id="resultsTitle">Quiz Complete!</div>
+      <div class="results-sub" id="resultsSub"></div>
+      <div class="results-breakdown">
+        <div class="breakdown-item">
+          <div class="breakdown-num good" id="correctCount">0</div>
+          <div class="breakdown-lbl" style="font-size:0.75rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin-top:2px;">Correct</div>
+        </div>
+        <div class="breakdown-item">
+          <div class="breakdown-num bad" id="incorrectCount">0</div>
+          <div class="breakdown-lbl" style="font-size:0.75rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin-top:2px;">Incorrect</div>
+        </div>
+        <div class="breakdown-item">
+          <div class="breakdown-num" style="color:var(--red)" id="pctDisplay">0%</div>
+          <div class="breakdown-lbl" style="font-size:0.75rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin-top:2px;">Percentage</div>
+        </div>
+      </div>
+      <button class="retry-btn" onclick="restartQuiz()">↺ Retake Quiz</button>
+    </div>
+  </div>
+</div>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+const questions = [
+  {
+    section: "Understanding Phishing",
+    question: "What percentage of all cyberattacks begin with a phishing email?",
+    options: [
+      "45%",
+      "68%",
+      "91%",
+      "99%"
+    ],
+    correct: 2,
+    feedback: "91% of all cyberattacks start with a phishing email. This makes phishing the single most common entry point for hackers — and it means every employee is a potential target and line of defense."
+  },
+  {
+    section: "Understanding Phishing",
+    question: "What is phishing?",
+    options: [
+      "A type of computer virus that automatically downloads itself",
+      "A social engineering attack that tricks you into giving up credentials, money, or data",
+      "A software bug that allows hackers to access your computer remotely",
+      "A spam filter that blocks unwanted emails"
+    ],
+    correct: 1,
+    feedback: "Phishing is a form of social engineering where attackers impersonate trusted people or organizations to trick you into clicking malicious links, downloading harmful attachments, sharing login credentials, or transferring money or data."
+  },
+  {
+    section: "Types of Phishing",
+    question: "A hacker sends an email pretending to be TOBOLA's own leadership — for example, posing as Dr. Yemi and asking you to send login credentials immediately. What type of attack is this?",
+    options: [
+      "Email Phishing",
+      "Smishing",
+      "Whaling",
+      "Vishing"
+    ],
+    correct: 2,
+    feedback: "Whaling targets executives and senior leadership specifically, or impersonates them to manipulate other employees. Because the message appears to come from someone in authority, employees are more likely to comply without questioning it."
+  },
+  {
+    section: "Types of Phishing",
+    question: "You receive a mass email that looks like it came from Apple, warning that your account has been compromised and urging you to log in immediately. What type of phishing is this?",
+    options: [
+      "Spear Phishing",
+      "Whaling",
+      "Vishing",
+      "Email Phishing"
+    ],
+    correct: 3,
+    feedback: "Email Phishing involves mass emails disguised as trusted brands or services. These emails often create a sense of urgency — like 'your account has been compromised' — to make you act quickly without thinking."
+  },
+  {
+    section: "Spotting Red Flags",
+    question: "You receive an email from \"no-reply@tobolaincs.com\" asking you to verify your account. What is the red flag in this sender address?",
+    options: [
+      "It uses 'no-reply' instead of a real name",
+      "There is an extra 's' — the real domain is @tobolainc.com, not @tobolaincs.com",
+      "It should end in .org, not .com",
+      "Legitimate TOBOLA emails always use first and last names"
+    ],
+    correct: 1,
+    feedback: "The real TOBOLA domain is @tobolainc.com. The fake email uses @tobolaincs.com — one extra letter 's'. Attackers register look-alike domains to trick employees at a quick glance. Always verify the full domain character by character."
+  },
+  {
+    section: "Spotting Red Flags",
+    question: "A phishing email opens with \"Dear Employee\" instead of your actual name. Why is this a warning sign?",
+    options: [
+      "Legitimate emails are always sent from personal Gmail accounts",
+      "TOBOLA never sends emails to groups",
+      "Phishing emails use generic greetings because they are sent in bulk to many people at once",
+      "Addressing someone by title is against company policy"
+    ],
+    correct: 2,
+    feedback: "Phishing emails are often sent in mass to thousands of people, so attackers use generic greetings like 'Dear Employee' or 'Dear Customer.' Legitimate emails from TOBOLA will always address you by your real name."
+  },
+  {
+    section: "Suspicious Links",
+    question: "You receive an email with a link that displays 'www.xfinity.com/billing'. Before clicking, you hover over it and see 'http://xf1nity-billing.sketchy-domain.ru'. What should you do?",
+    options: [
+      "Click it — the displayed text says Xfinity so it must be safe",
+      "Forward it to a coworker to get a second opinion",
+      "Do not click it — the actual URL is different from what's displayed and goes to an unknown domain",
+      "Reply to the email asking if the link is safe"
+    ],
+    correct: 2,
+    feedback: "Hovering over a link reveals its true destination. In this case, the real URL uses 'xf1nity' (with a number 1 instead of the letter i) and points to a completely unrelated foreign domain — a classic phishing tactic. Never click links that don't match the expected company domain."
+  },
+  {
+    section: "Suspicious Links",
+    question: "An email contains a shortened URL (like a bit.ly link). What should you do?",
+    options: [
+      "Click it — shortened URLs are always safe because they hide the long address",
+      "Treat it with extra suspicion, as shortened URLs hide the real destination",
+      "Forward it to all coworkers to warn them",
+      "Reply to the sender asking them to unshorten it"
+    ],
+    correct: 1,
+    feedback: "Shortened URLs (like bit.ly or tinyurl) completely hide the real destination, making it impossible to verify the link just by looking at it. Treat any shortened URL in an unexpected email with extreme caution and do not click it."
+  },
+  {
+    section: "Warning Signs",
+    question: "Which of the following is NOT a warning sign of a phishing email?",
+    options: [
+      "The email creates urgency: 'Act now or your account will be closed!'",
+      "The email contains spelling mistakes and odd grammar",
+      "The email addresses you by your full first and last name",
+      "The email includes an unexpected PDF attachment you didn't ask for"
+    ],
+    correct: 2,
+    feedback: "Being addressed by your real, full name is actually a sign of a LEGITIMATE email — phishing emails typically use generic greetings. The other three options — urgency, poor grammar, and unexpected attachments — are all classic phishing red flags."
+  },
+  {
+    section: "Warning Signs",
+    question: "You receive an email with an attachment named 'xZ7r29_final.zip' that you weren't expecting. What should you do?",
+    options: [
+      "Open it — ZIP files can't contain viruses",
+      "Unzip it to see what's inside before deciding",
+      "Do not open or unzip it — unexpected attachments with random names are a major red flag",
+      "Forward it to your team so they can check it"
+    ],
+    correct: 2,
+    feedback: "Unexpected attachments — especially those with random or unusual names — are a common way to deliver malware. Do not click, open, or unzip any attachment you weren't expecting. If in doubt, contact IT before doing anything."
+  },
+  {
+    section: "What To Do",
+    question: "You receive a suspicious phishing email. What is the correct order of actions?",
+    options: [
+      "Click the link to confirm it's fake, then delete it",
+      "Forward it to coworkers to warn them, then delete it",
+      "Stop, report it to IT, delete it — and alert IT immediately if you already clicked anything",
+      "Reply to the sender asking them to remove you from their list"
+    ],
+    correct: 2,
+    feedback: "The correct steps are: (1) STOP — don't click, download, or reply. (2) REPORT — forward to IT at it@tobolainc.com or use the 'Report Phishing' button. (3) DELETE — remove it from your inbox. (4) ALERT — if you already clicked a link or entered credentials, contact IT immediately. Never forward phishing emails to coworkers, as this increases the chance someone else clicks it."
+  },
+  {
+    section: "What To Do",
+    question: "You accidentally clicked a suspicious link and may have entered your password. What should you do first?",
+    options: [
+      "Wait to see if anything bad happens before contacting anyone",
+      "Delete the email and hope for the best",
+      "Tell a coworker but not IT, since it was your mistake",
+      "Change your password immediately and contact IT right away — time is critical"
+    ],
+    correct: 3,
+    feedback: "If you've already clicked a link or entered credentials, speed is everything. Change your password immediately and contact the IT Security Team at it@tobolainc.com right away. Everyone makes mistakes — IT is there to help, not judge. Acting fast can prevent a small mistake from becoming a company-wide breach."
+  }
+];
+
+let score = 0;
+let answered = 0;
+let userAnswers = new Array(questions.length).fill(null);
+
+function buildQuiz() {
+  const area = document.getElementById('quizArea');
+  area.innerHTML = '';
+  let currentSection = '';
+
+  questions.forEach((q, i) => {
+    if (q.section !== currentSection) {
+      currentSection = q.section;
+      const div = document.createElement('div');
+      div.className = 'section-label';
+      div.textContent = currentSection;
+      area.appendChild(div);
+    }
+
+    const card = document.createElement('div');
+    card.className = 'question-card';
+    card.id = `card-${i}`;
+    card.style.animationDelay = `${i * 0.04}s`;
+
+    const letters = ['A','B','C','D'];
+    card.innerHTML = `
+      <div class="question-number">Question ${i + 1}</div>
+      <div class="question-text">${q.question}</div>
+      <div class="options">
+        ${q.options.map((opt, j) => `
+          <button class="option" id="opt-${i}-${j}" onclick="selectAnswer(${i}, ${j})">
+            <span class="option-letter">${letters[j]}</span>
+            <span>${opt}</span>
+          </button>
+        `).join('')}
+      </div>
+      <div class="feedback" id="feedback-${i}">
+        <span class="feedback-icon"></span>
+        <span id="feedback-text-${i}"></span>
+      </div>
+      <button class="next-btn" id="next-${i}" onclick="scrollToNext(${i})">
+        ${i < questions.length - 1 ? 'Next Question →' : 'See My Results →'}
+      </button>
+    `;
+    area.appendChild(card);
+  });
+}
+
+function selectAnswer(qIndex, optIndex) {
+  if (userAnswers[qIndex] !== null) return;
+  userAnswers[qIndex] = optIndex;
+  answered++;
+
+  const q = questions[qIndex];
+  const isCorrect = optIndex === q.correct;
+  if (isCorrect) score++;
+
+  q.options.forEach((_, j) => {
+    const btn = document.getElementById(`opt-${qIndex}-${j}`);
+    btn.disabled = true;
+    if (j === q.correct) btn.classList.add('correct');
+    if (j === optIndex && !isCorrect) btn.classList.add('incorrect');
+  });
+
+  const fb = document.getElementById(`feedback-${qIndex}`);
+  const fbText = document.getElementById(`feedback-text-${qIndex}`);
+  fb.classList.add('show');
+  if (isCorrect) {
+    fb.classList.add('correct-fb');
+    fb.querySelector('.feedback-icon').textContent = '✓';
+    fbText.textContent = q.feedback;
+  } else {
+    fb.classList.add('incorrect-fb');
+    fb.querySelector('.feedback-icon').textContent = '✗';
+    fbText.innerHTML = `The correct answer is <strong>${['A','B','C','D'][q.correct]}. ${q.options[q.correct]}</strong>. ${q.feedback}`;
+  }
+
+  document.getElementById(`next-${qIndex}`).classList.add('show');
+  updateProgress();
+  if (answered === questions.length) setTimeout(showResults, 800);
+}
+
+function scrollToNext(qIndex) {
+  if (qIndex < questions.length - 1) {
+    document.getElementById(`card-${qIndex + 1}`).scrollIntoView({ behavior: 'smooth', block: 'center' });
+  } else {
+    showResults();
+  }
+}
+
+function updateProgress() {
+  const pct = Math.round((answered / questions.length) * 100);
+  document.getElementById('progressBar').style.width = pct + '%';
+  document.getElementById('progressLabel').textContent = `Question ${Math.min(answered + 1, questions.length)} of ${questions.length}`;
+  document.getElementById('progressCount').textContent = `${answered} answered`;
+}
+
+function showResults() {
+  document.getElementById('quizArea').style.display = 'none';
+  const results = document.getElementById('results');
+  results.style.display = 'block';
+  results.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+  const pct = Math.round((score / questions.length) * 100);
+  document.getElementById('scoreNumber').textContent = pct + '%';
+  document.getElementById('correctCount').textContent = score;
+  document.getElementById('incorrectCount').textContent = questions.length - score;
+  document.getElementById('pctDisplay').textContent = pct + '%';
+
+  const circumference = 364.4;
+  setTimeout(() => {
+    document.getElementById('scoreCircle').style.strokeDashoffset = circumference - (pct / 100) * circumference;
+  }, 200);
+
+  let title, msg, color;
+  if (pct >= 90) {
+    title = "Outstanding! You're Phishing-Proof 🛡️";
+    msg = "Excellent work. You have a strong understanding of phishing threats and know exactly how to protect yourself and TOBOLA. Stay vigilant out there.";
+    color = '#059669';
+  } else if (pct >= 80) {
+    title = "Good Job — You Passed! ✅";
+    msg = "You have a solid grasp of phishing awareness. Review any questions you missed to sharpen your instincts even further.";
+    color = '#1a56db';
+  } else if (pct >= 60) {
+    title = "Almost There 📚";
+    msg = "You didn't quite reach the 80% passing mark. We recommend re-watching the Phishing Awareness Training and retaking the quiz before proceeding.";
+    color = '#f59e0b';
+  } else {
+    title = "More Review Needed 🔒";
+    msg = "It looks like this material needs more attention. Please re-watch the full training video and review the slide deck before retaking this quiz.";
+    color = '#dc2626';
+  }
+
+  document.getElementById('scoreCircle').style.stroke = color;
+  document.getElementById('resultsTitle').textContent = title;
+  document.getElementById('resultsSub').textContent = msg;
+  document.getElementById('progressLabel').textContent = 'Quiz Complete';
+  document.getElementById('progressBar').style.width = '100%';
+  document.getElementById('progressCount').textContent = `${answered} of ${questions.length} answered`;
+}
+
+function restartQuiz() {
+  score = 0; answered = 0;
+  userAnswers = new Array(questions.length).fill(null);
+  document.getElementById('results').style.display = 'none';
+  document.getElementById('quizArea').style.display = 'block';
+  document.getElementById('progressBar').style.width = '0%';
+  document.getElementById('progressLabel').textCon
